@@ -200,7 +200,10 @@ public class Biblioteca2025 {
         }
 
         private void listaLibros() {
-
+            for (Libro l: libros) {
+                System.out.println(l);
+                
+            }
         }
     //</editor-fold>
     
@@ -228,7 +231,23 @@ public class Biblioteca2025 {
     
 
     private void nuevoPrestamo() {
-        
+        System.out.println("Identificacion del usuario:");
+        int posUsuario=buscaDni(solicitaDni());
+        if (posUsuario==-1){
+            System.out.println("No es socio de la Biblioteca");
+            //En su momento aqui habria que poner que pregunte si quiere darse de alta como socio y en caso afirmativo llevarlo a nuevoUsuario().
+        }else{
+            int posLibro=buscaIsbn(solicitaIsbn());
+            if(posLibro==-1){
+                System.out.println("El ISBN no pertenece a un libro existente en nuestro Catalogo. \n Lo sentimos");
+            }else if(libros.get(posLibro).getEjemplares()>0){
+                LocalDate hoy=LocalDate.now();
+                prestamos.add(new Prestamo(libros.get(posLibro),usuarios.get(posUsuario),hoy,hoy.plusDays(15)));
+                libros.get(posLibro).setEjemplares(libros.get(posLibro).getEjemplares()-1);
+            }else{
+                System.out.println("No quedan unidades de este");
+            }
+        }
     }
 
     private void eliminarPrestamo() {
@@ -240,6 +259,10 @@ public class Biblioteca2025 {
     }
 
     private void listaPrestamos() {
+        for (Prestamo p: prestamos) {
+            System.out.println(p);
+            
+        }
         
     }
     //</editor-fold>
@@ -283,6 +306,65 @@ public class Biblioteca2025 {
         for (Prestamo p:prestamos) {
             System.out.println(p);
         }
+    }
+    
+    
+    /**
+     * Metodo para buscar un DNI en un ArrayList, devuelve la posicion en este, si no le encuentra devuelve un -1
+     * @param dni Recibe el DNI (String) a buscar
+     * @return Devuelve la posicion (int) del DNI en el ArrayList, si no le encuentra devuelve un -1
+     */
+    public int buscaDni (String dni){
+        int pos = -1;
+        for (int i = 0; i<usuarios.size(); i++) {
+                if(usuarios.get(i).getDni().equalsIgnoreCase(dni) ){
+                    pos = i;
+                    break;
+                }
+                
+            }
+        
+        
+        return pos;
+    }
+    
+    /**
+     * Metodo para buscar un ISBN en un ArrayList, devuelve la posicion en este, si no le encuentra devuelve un -1
+     * @param isbn Recibe el Isbn (String) a buscar
+     * @return Devulve la posicion (int) del DNI en el ArrayList, si no lo encuentra devuelve un -1
+     */
+    public int buscaIsbn (String isbn){
+        int pos = -1;
+        for (int i = 0; i<libros.size(); i++) {
+                if(libros.get(i).getIsbn().equalsIgnoreCase(isbn) ){
+                    pos = i;
+                    break;
+                }
+                
+            }
+        
+        
+        return pos;
+    }
+    /**
+     * Metodo que solicita un DNI. Pdte de validacion
+     * @return (String) Devuelve el DNI introducido 
+     */
+    public String solicitaDni (){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Teclea el dni del usuario: ");
+        String dni=sc.next();
+        return dni;
+    }
+    /**
+     * Metodo que solicita un ISBN. Pdte de validacion
+     * @return (String) Devuelve el ISBN introducido 
+     */
+    public String solicitaIsbn (){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Teclea el isbn del libro: ");
+        String isbn=sc.next();
+        return isbn;
     }
     //</editor-fold>
 
